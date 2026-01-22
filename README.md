@@ -1,0 +1,190 @@
+# Global Threat & Event Intelligence Map
+
+A real-time global situational awareness platform that plots security events, geopolitical developments, and threat indicators on an interactive map. Think of it as an OSINT (Open Source Intelligence) command center.
+
+## Features
+
+### Core Features
+
+- **Real-Time Event Mapping** - Plot breaking news events (conflicts, protests, natural disasters) on a world map with color-coded threat levels
+- **Interactive Mapbox Map** - Dark-themed map with clustering, heatmap visualization, and smooth navigation
+- **Event Feed** - Real-time filterable feed of global events with category and threat level filters
+- **Entity Search** - Research organizations, people, countries, and groups using Valyu's intelligence APIs
+- **Alert System** - Configure keyword and region-based alerts with real-time notifications
+
+### Country Intelligence
+
+Click on any country to view detailed conflict intelligence:
+
+- **Historical Conflicts** - Wars, military engagements, and conflicts throughout history with dates, opposing parties, and outcomes
+- **Current Conflicts** - Ongoing wars, military tensions, border disputes, civil unrest, terrorism threats, and geopolitical tensions
+- **Tabbed Interface** - Current conflicts (red-themed) and Historical conflicts (blue-themed) displayed in separate tabs
+- **Country Highlighting** - Selected country fills with red color and blinks while loading data
+- **AI-Powered Analysis** - Conflict data synthesized using Valyu Answer API with cited sources
+
+### Military Bases Layer
+
+Visualize global military presence:
+
+- **US Military Bases** - Displayed as green markers (30+ bases worldwide)
+- **NATO Installations** - Displayed as blue markers
+- **Base Details** - Click any base to see its name, type, and host country
+- **Automatic Loading** - Military base data loads when the map initializes
+- **Coverage** - Includes bases in Europe, Asia-Pacific, Middle East, Africa, and the Americas
+
+### Map Visualization
+
+- **Auto-Pan Mode** - Play/pause button to automatically pan across the globe
+- **Event Clustering** - Group nearby events for cleaner visualization at lower zoom levels
+- **Heatmap View** - Toggle heatmap to visualize event density
+- **Entity Locations** - When researching entities, their known locations appear as purple markers on the map
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Map**: Mapbox GL JS + react-map-gl
+- **UI**: Tailwind CSS v4 + custom components
+- **Intelligence API**: valyu-js (search, answer, deep research)
+- **Schema Validation**: zod
+- **State Management**: Zustand
+- **Markdown**: react-markdown + remark-gfm
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Mapbox account and API token
+- Valyu API key
+
+### Installation
+
+1. Clone the repository and install dependencies:
+
+```bash
+npm install
+```
+
+2. Create a `.env.local` file in the root directory:
+
+```env
+NEXT_PUBLIC_MAPBOX_TOKEN=your_mapbox_token_here
+VALYU_API_KEY=your_valyu_api_key_here
+```
+
+3. Get your API keys:
+   - **Mapbox**: [Get a token](https://account.mapbox.com/access-tokens/)
+   - **Valyu**: [Get an API key](https://valyu.ai)
+
+4. Run the development server:
+
+```bash
+npm run dev
+```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+```
+globalthreatmap/
+├── app/
+│   ├── layout.tsx              # Root layout
+│   ├── page.tsx                # Main dashboard
+│   ├── globals.css             # Global styles
+│   └── api/                    # API routes
+│       ├── events/             # Event fetching via Valyu
+│       ├── entities/           # Entity research
+│       ├── reports/            # Deep research reports
+│       ├── countries/
+│       │   └── conflicts/      # Country conflict intelligence
+│       └── military-bases/     # Military base data
+├── components/
+│   ├── map/                    # Map components
+│   │   ├── threat-map.tsx      # Main map component
+│   │   ├── timeline-scrubber.tsx # Auto-pan controls
+│   │   └── country-conflicts-modal.tsx # Conflict details modal
+│   ├── feed/                   # Event feed components
+│   ├── search/                 # Entity search components
+│   ├── alerts/                 # Alert management
+│   └── ui/                     # Base UI components
+│       └── markdown.tsx        # Markdown renderer
+├── lib/
+│   ├── valyu.ts                # Valyu client & API functions
+│   ├── geocoding.ts            # Location extraction
+│   └── event-classifier.ts     # Event classification
+├── stores/
+│   └── map-store.ts            # Map state (viewport, layers, bases)
+├── types/                      # TypeScript types
+└── hooks/                      # React hooks
+```
+
+## Usage
+
+### Interactive Map
+
+- **Click on a Country** - Opens the Country Conflicts Modal showing historical and current conflicts
+- **Click on an Event Marker** - Shows event details popup
+- **Click on a Military Base** - Shows base name, type (US/NATO), and country
+- **Zoom/Pan** - Navigate the map or use auto-pan mode
+
+### Event Feed
+
+The event feed displays real-time global events. You can:
+- Filter by threat level (Critical, High, Medium, Low, Info)
+- Filter by category (Conflict, Protest, Disaster, Diplomatic, etc.)
+- Search events by keyword
+- Click on events to fly to their location on the map
+
+### Auto-Pan Mode
+
+The play/pause button in the bottom-left corner toggles automatic map panning:
+- **Play** - Map continuously pans eastward across the globe
+- **Pause** - Stops the auto-pan animation
+
+### Entity Search
+
+Search for any organization, country, or group to get:
+- Overview and description
+- Location markers on the map (headquarters, offices, operations)
+- Deep research analysis (optional)
+- Related data sources
+
+### Country Conflicts
+
+Click any country on the map to view:
+- **Current Tab** (Red) - Active conflicts, military tensions, and ongoing security threats
+- **Historical Tab** (Blue) - Past wars and military engagements with dates and outcomes
+- **Sources** - Cited references for all conflict information (Wikipedia excluded)
+
+### Alerts
+
+Create alert rules based on:
+- Keywords (e.g., "nuclear", "sanctions")
+- Threat levels
+- Geographic regions (coming soon)
+
+## API Routes
+
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/events` | GET | Fetch global events from Valyu |
+| `/api/events` | POST | Fetch events with custom queries |
+| `/api/entities` | GET/POST | Research entities and get locations |
+| `/api/reports` | POST | Generate deep research reports |
+| `/api/countries/conflicts` | GET | Get historical and current conflicts for a country |
+| `/api/military-bases` | GET | Get US and NATO military base locations (1hr cache) |
+
+## Valyu Integration
+
+This app uses [Valyu](https://valyu.ai) for intelligence data:
+
+- **Search API** - Finding global events and news
+- **Answer API** - Synthesizing conflict intelligence and military base data
+- **Deep Research** - Comprehensive entity analysis
+
+All Valyu queries exclude Wikipedia to ensure higher-quality source citations.
+
+## License
+
+MIT

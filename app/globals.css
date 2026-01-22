@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: hsl(222 47% 11%);
+  --color-foreground: hsl(210 40% 98%);
+  --color-card: hsl(222 47% 14%);
+  --color-card-foreground: hsl(210 40% 98%);
+  --color-popover: hsl(222 47% 14%);
+  --color-popover-foreground: hsl(210 40% 98%);
+  --color-primary: hsl(217 91% 60%);
+  --color-primary-foreground: hsl(222 47% 11%);
+  --color-secondary: hsl(217 33% 17%);
+  --color-secondary-foreground: hsl(210 40% 98%);
+  --color-muted: hsl(217 33% 17%);
+  --color-muted-foreground: hsl(215 20% 65%);
+  --color-accent: hsl(217 33% 17%);
+  --color-accent-foreground: hsl(210 40% 98%);
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(210 40% 98%);
+  --color-border: hsl(217 33% 17%);
+  --color-input: hsl(217 33% 17%);
+  --color-ring: hsl(217 91% 60%);
+  --radius: 0.5rem;
+
+  --color-threat-critical: #ef4444;
+  --color-threat-high: #f97316;
+  --color-threat-medium: #eab308;
+  --color-threat-low: #22c55e;
+  --color-threat-info: #3b82f6;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Mapbox overrides for dark theme */
+.mapboxgl-popup {
+  max-width: 320px !important;
+}
+
+.mapboxgl-popup-content {
+  background-color: hsl(222 47% 14%) !important;
+  color: hsl(210 40% 98%) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3) !important;
+  border: 1px solid hsl(217 33% 17%) !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  max-width: 320px !important;
+}
+
+.mapboxgl-popup-close-button {
+  color: hsl(210 40% 98%) !important;
+  font-size: 18px !important;
+  padding: 4px 8px !important;
+}
+
+.mapboxgl-popup-close-button:hover {
+  background-color: hsl(217 33% 17%) !important;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: hsl(222 47% 14%) !important;
+}
+
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+  border-bottom-color: hsl(222 47% 14%) !important;
+}
+
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  border-right-color: hsl(222 47% 14%) !important;
+}
+
+.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  border-left-color: hsl(222 47% 14%) !important;
+}
+
+.mapboxgl-ctrl-group {
+  background-color: var(--color-card);
+  border-color: var(--color-border);
+}
+
+.mapboxgl-ctrl-group button {
+  color: var(--color-foreground);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-muted);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-muted-foreground);
+}
+
+/* Event feed animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.event-card-enter {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Pulse animation for critical threats */
+@keyframes pulse-threat {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.threat-critical {
+  animation: pulse-threat 2s ease-in-out infinite;
+}
