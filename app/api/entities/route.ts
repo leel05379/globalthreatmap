@@ -98,9 +98,14 @@ export async function POST(request: Request) {
       economicData: entityData.data,
     };
 
+    let deliverables = undefined;
+    let pdfUrl = undefined;
+
     if (includeDeepResearch) {
       const research = await deepResearch(name);
       profile.researchSummary = research.summary;
+      deliverables = research.deliverables;
+      pdfUrl = research.pdfUrl;
 
       // Also extract locations from deep research
       const deepLocations = await geocodeLocationsFromText(research.summary);
@@ -111,7 +116,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({ entity: profile });
+    return NextResponse.json({ entity: profile, deliverables, pdfUrl });
   } catch (error) {
     console.error("Error researching entity:", error);
     return NextResponse.json(

@@ -377,43 +377,106 @@ export async function searchEntityLocations(entityName: string, options?: Entity
   }
 }
 
+export interface DeepResearchResult {
+  summary: string;
+  sources: { title: string; url: string }[];
+  deliverables?: {
+    csv?: { url: string; title: string };
+    pptx?: { url: string; title: string };
+  };
+  pdfUrl?: string;
+}
+
 export async function deepResearch(
   topic: string,
   options?: EntityOptions
-): Promise<{ summary: string; sources: { title: string; url: string }[] }> {
-  const searchBody = {
-    query: `comprehensive analysis: ${topic}`,
-    searchType: "all",
-    maxNumResults: 30,
-  };
+): Promise<DeepResearchResult> {
+  try {
+    const valyu = getValyuClient();
 
-  if (options?.accessToken) {
-    const proxyResult = await callViaProxy("/v1/search", searchBody, options.accessToken);
+    // Create deep research task with deliverables
+    const task = await valyu.deepresearch.create({
+      query: `Intelligence dossier on ${topic}. Include:
+- Background and overview
+- Key locations and geographic presence
+- Organizational structure and leadership
+- Related entities, allies, and adversaries
+- Recent activities and incidents
+- Threat assessment and capabilities
+- Timeline of significant events`,
+      mode: "fast",
+      outputFormats: ["markdown", "pdf"],
+      deliverables: [
+        {
+          type: "csv",
+          description: `Intelligence data export for ${topic} with columns for locations, entities, relationships, events, and sources`,
+          columns: [
+            "Category",
+            "Name",
+            "Description",
+            "Location",
+            "Coordinates",
+            "Date",
+            "Relationship",
+            "Source URL",
+          ],
+          includeHeaders: true,
+        },
+        {
+          type: "pptx",
+          description: `Executive intelligence briefing on ${topic} with key findings, threat assessment, and recommendations`,
+          slides: 8,
+        },
+      ],
+    });
 
-    if (!proxyResult.success) {
+    if (!task.success || !task.deepresearch_id) {
+      console.error("Failed to create deep research task:", task.error);
       return { summary: "Research failed. Please try again.", sources: [] };
     }
 
-    const response = proxyResult.data;
-    if (!response.results) {
-      return { summary: "No research results found.", sources: [] };
+    // Wait for completion with progress logging
+    const result = await valyu.deepresearch.wait(task.deepresearch_id, {
+      pollInterval: 5000,
+      maxWaitTime: 600000, // 10 minutes for fast mode
+      onProgress: (status) => {
+        if (status.progress) {
+          console.log(`Deep research progress: ${status.progress.current_step}/${status.progress.total_steps}`);
+        }
+      },
+    });
+
+    if (result.status !== "completed") {
+      console.error("Deep research failed:", result.error);
+      return { summary: "Research did not complete successfully.", sources: [] };
     }
 
-    const summary = response.results
-      .slice(0, 10)
-      .map((r: any) => (typeof r.content === "string" ? r.content : ""))
-      .join("\n\n")
-      .slice(0, 3000);
+    // Extract deliverables
+    const deliverables: DeepResearchResult["deliverables"] = {};
+    if (result.deliverables) {
+      for (const d of result.deliverables) {
+        if (d.status === "completed" && d.url) {
+          if (d.type === "csv") {
+            deliverables.csv = { url: d.url, title: d.title };
+          } else if (d.type === "pptx") {
+            deliverables.pptx = { url: d.url, title: d.title };
+          }
+        }
+      }
+    }
 
-    const sources = response.results.map((r: any) => ({
-      title: r.title || "Untitled",
-      url: r.url || "",
-    }));
-
-    return { summary, sources };
-  }
-
-  try {
+    return {
+      summary: typeof result.output === "string" ? result.output : JSON.stringify(result.output),
+      sources: (result.sources || []).map((s) => ({
+        title: s.title || "Source",
+        url: s.url || "",
+      })),
+      deliverables: Object.keys(deliverables).length > 0 ? deliverables : undefined,
+      pdfUrl: result.pdf_url,
+    };
+  } catch (error) {
+    console.error("Deep research error:", error);
+    // Fallback to simple search if deep research fails
     const valyu = getValyuClient();
     const response = await valyu.search(`comprehensive analysis: ${topic}`, {
       searchType: "all",
@@ -430,15 +493,13 @@ export async function deepResearch(
       .join("\n\n")
       .slice(0, 3000);
 
-    const sources = response.results.map((r) => ({
-      title: r.title || "Untitled",
-      url: r.url || "",
-    }));
-
-    return { summary, sources };
-  } catch (error) {
-    console.error("Deep research error:", error);
-    throw error;
+    return {
+      summary,
+      sources: response.results.map((r) => ({
+        title: r.title || "Untitled",
+        url: r.url || "",
+      })),
+    };
   }
 }
 

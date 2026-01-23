@@ -13,7 +13,7 @@ A real-time global situational awareness platform that plots security events, ge
 - **Real-Time Event Mapping** - Plot breaking news events (conflicts, protests, natural disasters) on a world map with color-coded threat levels
 - **Interactive Mapbox Map** - Dark-themed map with clustering, heatmap visualization, and smooth navigation
 - **Event Feed** - Real-time filterable feed of global events with category and threat level filters
-- **Entity Search** - Research organizations, people, countries, and groups using Valyu's intelligence APIs
+- **Intel Dossiers** - Build intelligence dossiers on any actor with deep research reports, CSV data exports, and PowerPoint briefings
 - **Alert System** - Configure keyword and region-based alerts with real-time notifications
 
 ### Country Intelligence
@@ -151,13 +151,20 @@ The play/pause button in the bottom-left corner toggles automatic map panning:
 - **Play** - Map continuously pans eastward across the globe
 - **Pause** - Stops the auto-pan animation
 
-### Entity Search
+### Intel Dossiers
 
-Search for any organization, country, or group to get:
+Build comprehensive intelligence dossiers on any actor:
 - Overview and description
 - Location markers on the map (headquarters, offices, operations)
-- Deep research analysis (optional)
 - Related data sources
+
+**Full Dossier Mode**: Enable the "Full dossier with deep research" checkbox to generate:
+- ~50 page intelligence report with sourced analysis
+- **CSV Data Export** - Structured data with locations, coordinates, key figures, events, and source URLs
+- **PowerPoint Briefing** - 8-slide executive intelligence briefing
+- **PDF Report** - Downloadable full report
+
+Perfect for OSINT analysts who need exportable deliverables for briefings and further analysis.
 
 ### Country Conflicts
 
@@ -180,6 +187,8 @@ Create alert rules based on:
 | `/api/events` | GET | Fetch global events from Valyu |
 | `/api/events` | POST | Fetch events with custom queries |
 | `/api/entities` | GET/POST | Research entities and get locations |
+| `/api/deepresearch` | POST | Create async deep research task with deliverables |
+| `/api/deepresearch/[taskId]` | GET | Poll deep research task status and results |
 | `/api/reports` | POST | Generate deep research reports |
 | `/api/countries/conflicts` | GET | Get historical and current conflicts for a country |
 | `/api/military-bases` | GET | Get US and NATO military base locations (1hr cache) |
