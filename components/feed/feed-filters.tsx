@@ -1,6 +1,7 @@
 "use client";
 
 import { useEventsStore } from "@/stores/events-store";
+import { useTranslation } from "@/hooks/use-translation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +43,7 @@ export function FeedFilters() {
     setThreatLevelFilters,
     clearFilters,
   } = useEventsStore();
+  const { t } = useTranslation();
 
   const hasFilters =
     searchQuery ||
@@ -69,7 +71,7 @@ export function FeedFilters() {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search events..."
+          placeholder={t('filters.search_placeholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-9 pr-9"
@@ -86,7 +88,7 @@ export function FeedFilters() {
 
       <div>
         <p className="mb-2 text-xs font-medium text-muted-foreground">
-          Threat Level
+          {t('filters.threat_level')}
         </p>
         <div className="flex flex-wrap gap-1">
           {THREAT_LEVELS.map((level) => (
@@ -96,7 +98,7 @@ export function FeedFilters() {
               className="cursor-pointer capitalize"
               onClick={() => toggleThreatLevel(level)}
             >
-              {level}
+              {t(`filters.levels.${level}` as any)}
             </Badge>
           ))}
         </div>
@@ -104,7 +106,7 @@ export function FeedFilters() {
 
       <div>
         <p className="mb-2 text-xs font-medium text-muted-foreground">
-          Category
+          {t('filters.category')}
         </p>
         <div className="flex flex-wrap gap-1">
           {CATEGORIES.map((category) => (
@@ -116,7 +118,7 @@ export function FeedFilters() {
               className="cursor-pointer capitalize"
               onClick={() => toggleCategory(category)}
             >
-              {category}
+              {t(`filters.categories.${category}` as any)}
             </Badge>
           ))}
         </div>
@@ -130,7 +132,7 @@ export function FeedFilters() {
           className="w-full text-muted-foreground"
         >
           <X className="mr-2 h-4 w-4" />
-          Clear Filters
+          {t('filters.clear')}
         </Button>
       )}
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "@/hooks/use-translation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { EventFeed } from "@/components/feed/event-feed";
@@ -12,10 +13,11 @@ type Tab = "feed" | "search";
 export function Sidebar() {
   const [activeTab, setActiveTab] = useState<Tab>("feed");
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { t } = useTranslation();
 
   const tabs = [
-    { id: "feed" as Tab, label: "Live Feed", icon: Activity },
-    { id: "search" as Tab, label: "Intel", icon: FileText },
+    { id: "feed" as Tab, label: t('sidebar.live_feed'), icon: Activity },
+    { id: "search" as Tab, label: t('sidebar.intel'), icon: FileText },
   ];
 
   return (

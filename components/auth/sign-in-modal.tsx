@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogContent,
 } from "@/components/ui/dialog";
+import { useTranslation } from "@/hooks/use-translation";
 import { Button } from "@/components/ui/button";
 
 interface SignInModalProps {
@@ -33,6 +34,8 @@ function ValyuLogoWithText() {
 }
 
 export function SignInModal({ open, onOpenChange }: SignInModalProps) {
+  const { t } = useTranslation();
+
   const handleClose = () => {
     onOpenChange(false);
   };
@@ -40,21 +43,21 @@ export function SignInModal({ open, onOpenChange }: SignInModalProps) {
   return (
     <Dialog open={open} onClose={handleClose} className="max-w-md">
       <DialogHeader onClose={handleClose}>
-        <DialogTitle className="text-center text-xl">Sign in</DialogTitle>
+        <DialogTitle className="text-center text-xl">{t('auth.sign_in')}</DialogTitle>
       </DialogHeader>
       <DialogContent className="space-y-6">
         <p className="text-center text-sm text-muted-foreground">
-          Sign in to access all features.
+          {t('auth.sign_in_desc')}
         </p>
 
         <p className="text-center text-sm text-muted-foreground">
-          Valyu is the intelligence layer of GTM. It gives access to real-time web search, financial, academic, medical research and proprietary data sources.
+          {t('auth.valyu_desc')}
         </p>
 
         {/* Signups Halted Notice */}
         <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-4 text-center">
           <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
-            Due to extreme demand, signups are currently paused
+            {t('auth.paused_notice')}
           </p>
         </div>
 
@@ -63,7 +66,7 @@ export function SignInModal({ open, onOpenChange }: SignInModalProps) {
           disabled={true}
           className="w-full h-12 opacity-50 cursor-not-allowed"
         >
-          <span className="mr-2">Sign in with</span>
+          <span className="mr-2">{t('auth.sign_in_with')}</span>
           <ValyuLogoWithText />
         </Button>
       </DialogContent>

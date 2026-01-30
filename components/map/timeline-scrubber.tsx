@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslation } from "@/hooks/use-translation";
 import { useMapStore } from "@/stores/map-store";
 import { Play, Pause } from "lucide-react";
 
@@ -10,6 +11,7 @@ export function TimelineScrubber() {
   const { isAutoPlaying, startAutoPlay, stopAutoPlay, viewport, setViewport } =
     useMapStore();
   const animationRef = useRef<number | null>(null);
+  const { t } = useTranslation();
 
   const handlePlayToggle = () => {
     if (isAutoPlaying) {
@@ -48,12 +50,11 @@ export function TimelineScrubber() {
     <div className="absolute bottom-6 left-6 z-10">
       <button
         onClick={handlePlayToggle}
-        className={`flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all duration-200 ${
-          isAutoPlaying
-            ? "bg-primary text-primary-foreground hover:bg-primary/90"
-            : "bg-card/95 text-foreground hover:bg-card border border-border"
-        } backdrop-blur-sm`}
-        title={isAutoPlaying ? "Pause auto-pan" : "Start auto-pan"}
+        className={`flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all duration-200 ${isAutoPlaying
+          ? "bg-primary text-primary-foreground hover:bg-primary/90"
+          : "bg-card/95 text-foreground hover:bg-card border border-border"
+          } backdrop-blur-sm`}
+        title={isAutoPlaying ? t('map.timeline.pause') : t('map.timeline.play')}
       >
         {isAutoPlaying ? (
           <Pause className="h-5 w-5" />

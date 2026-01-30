@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "@/hooks/use-translation";
 import type { ThreatEvent } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { formatRelativeTime } from "@/lib/utils";
@@ -13,6 +14,7 @@ interface EventPopupProps {
 
 export function EventPopup({ event }: EventPopupProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <div className={`min-w-[250px] p-2 ${isExpanded ? "max-w-[500px]" : "max-w-[300px]"}`}>
@@ -50,7 +52,7 @@ export function EventPopup({ event }: EventPopupProps) {
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <MapPin className="h-3 w-3" />
         <span>
-          {event.location.placeName || event.location.country || "Unknown"}
+          {event.location.placeName || event.location.country || t('popup.unknown_location')}
         </span>
       </div>
 
@@ -67,12 +69,12 @@ export function EventPopup({ event }: EventPopupProps) {
               {isExpanded ? (
                 <>
                   <ChevronUp className="h-3 w-3" />
-                  Collapse
+                  {t('popup.collapse')}
                 </>
               ) : (
                 <>
                   <ChevronDown className="h-3 w-3" />
-                  Expand
+                  {t('popup.expand')}
                 </>
               )}
             </button>
@@ -84,7 +86,7 @@ export function EventPopup({ event }: EventPopupProps) {
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-primary hover:underline"
             >
-              Source <ExternalLink className="h-3 w-3" />
+              {t('popup.source')} <ExternalLink className="h-3 w-3" />
             </a>
           )}
         </div>

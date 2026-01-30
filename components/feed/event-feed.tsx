@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "@/hooks/use-translation";
 import { useEventsStore } from "@/stores/events-store";
 import { useAuthStore } from "@/stores/auth-store";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,6 +18,7 @@ export function EventFeed() {
     useEventsStore();
   const { isAuthenticated } = useAuthStore();
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const { t } = useTranslation();
 
   const requiresAuth = APP_MODE === "valyu";
   const showSignInPrompt = requiresAuth && !isAuthenticated && !isLoading && filteredEvents.length === 0;
@@ -24,9 +26,9 @@ export function EventFeed() {
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-border p-4">
-        <h2 className="text-lg font-semibold text-foreground">Event Feed</h2>
+        <h2 className="text-lg font-semibold text-foreground">{t('feed.title')}</h2>
         <p className="text-sm text-muted-foreground">
-          {filteredEvents.length} events
+          {filteredEvents.length} {t('feed.events_count')}
         </p>
       </div>
 
@@ -37,7 +39,7 @@ export function EventFeed() {
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
             <span className="ml-2 text-sm text-muted-foreground">
-              Loading events...
+              {t('feed.loading')}
             </span>
           </div>
         )}
@@ -52,17 +54,17 @@ export function EventFeed() {
           <div className="py-8 text-center">
             <Lock className="mx-auto h-8 w-8 text-muted-foreground/50 mb-3" />
             <p className="text-sm font-medium text-foreground mb-1">
-              Sign in to view events
+              {t('feed.sign_in_title')}
             </p>
             <p className="text-xs text-muted-foreground mb-4">
-              Events require authentication
+              {t('feed.sign_in_desc')}
             </p>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowSignInModal(true)}
             >
-              Sign in
+              {t('feed.sign_in_button')}
             </Button>
           </div>
         )}
@@ -70,7 +72,7 @@ export function EventFeed() {
         {!isLoading && !error && !showSignInPrompt && filteredEvents.length === 0 && (
           <div className="py-8 text-center">
             <p className="text-sm text-muted-foreground">
-              No events match your filters
+              {t('feed.no_events')}
             </p>
           </div>
         )}

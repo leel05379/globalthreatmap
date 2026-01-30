@@ -22,6 +22,7 @@ import {
 import { Favicon } from "@/components/ui/favicon";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/auth-store";
+import { useTranslation } from "@/hooks/use-translation";
 import { formatVolume, formatProbability, getLeadingOutcome, type ParsedMarket } from "@/lib/polymarket";
 
 interface CountryConflictsModalProps {
@@ -43,56 +44,6 @@ interface ConflictData {
 
 type TabType = "current" | "past" | "markets";
 
-function AnswerSkeleton() {
-  return (
-    <div className="rounded-lg border border-border bg-card p-4">
-      <div className="mb-4 flex items-center gap-2">
-        <RotateCw className="h-4 w-4 animate-spin text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">
-          Researching conflicts - typically under 15 seconds
-        </span>
-      </div>
-      <div className="space-y-3">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-11/12" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-4/5" />
-      </div>
-    </div>
-  );
-}
-
-function SourcesSkeleton() {
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <Database className="h-4 w-4 text-muted-foreground" />
-        <span className="font-medium text-foreground">Sources</span>
-        <span className="text-sm text-muted-foreground">loading sources...</span>
-      </div>
-      <div className="space-y-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="rounded-lg border border-border bg-card p-4">
-            <div className="flex items-start gap-3">
-              <Skeleton className="h-6 w-6 rounded-full" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-3 w-full" />
-                <div className="flex gap-2 pt-1">
-                  <Skeleton className="h-5 w-16 rounded-full" />
-                  <Skeleton className="h-5 w-20 rounded-full" />
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function CountryConflictsModal({
   country,
   onClose,
@@ -106,6 +57,7 @@ export function CountryConflictsModal({
   const [activeTab, setActiveTab] = useState<TabType>("current");
   const eventSourceRef = useRef<EventSource | null>(null);
   const { accessToken } = useAuthStore();
+  const { t } = useTranslation();
 
   // Prediction markets state
   const [markets, setMarkets] = useState<ParsedMarket[]>([]);
@@ -202,29 +154,29 @@ export function CountryConflictsModal({
 
         switch (chunk.type) {
           case "current_content":
-            setData((prev) =>
+            setData((prev: ConflictData | null) =>
               prev
                 ? {
-                    ...prev,
-                    current: {
-                      ...prev.current,
-                      conflicts: prev.current.conflicts + (chunk.content || ""),
-                    },
-                  }
+                  ...prev,
+                  current: {
+                    ...prev.current,
+                    conflicts: prev.current.conflicts + (chunk.content || ""),
+                  },
+                }
                 : null
             );
             break;
 
           case "current_sources":
-            setData((prev) =>
+            setData((prev: ConflictData | null) =>
               prev
                 ? {
-                    ...prev,
-                    current: {
-                      ...prev.current,
-                      sources: chunk.sources || [],
-                    },
-                  }
+                  ...prev,
+                  current: {
+                    ...prev.current,
+                    sources: chunk.sources || [],
+                  },
+                }
                 : null
             );
             setIsStreamingCurrent(false);
@@ -232,29 +184,29 @@ export function CountryConflictsModal({
             break;
 
           case "past_content":
-            setData((prev) =>
+            setData((prev: ConflictData | null) =>
               prev
                 ? {
-                    ...prev,
-                    past: {
-                      ...prev.past,
-                      conflicts: prev.past.conflicts + (chunk.content || ""),
-                    },
-                  }
+                  ...prev,
+                  past: {
+                    ...prev.past,
+                    conflicts: prev.past.conflicts + (chunk.content || ""),
+                  },
+                }
                 : null
             );
             break;
 
           case "past_sources":
-            setData((prev) =>
+            setData((prev: ConflictData | null) =>
               prev
                 ? {
-                    ...prev,
-                    past: {
-                      ...prev.past,
-                      sources: chunk.sources || [],
-                    },
-                  }
+                  ...prev,
+                  past: {
+                    ...prev.past,
+                    sources: chunk.sources || [],
+                  },
+                }
                 : null
             );
             break;
@@ -315,7 +267,7 @@ export function CountryConflictsModal({
           <div>
             <DialogTitle>{country}</DialogTitle>
             <p className="text-sm text-muted-foreground">
-              Wars & Conflicts History
+              {t('conflicts.title')}
             </p>
           </div>
         </div>
@@ -342,7 +294,7 @@ export function CountryConflictsModal({
                 )}
               >
                 <AlertTriangle className="h-4 w-4" />
-                Current
+                {t('conflicts.tabs.current')}
                 {isStreamingCurrent && (
                   <RotateCw className="h-3 w-3 animate-spin" />
                 )}
@@ -357,7 +309,7 @@ export function CountryConflictsModal({
                 )}
               >
                 <History className="h-4 w-4" />
-                Historical
+                {t('conflicts.tabs.historical')}
                 {isStreamingPast && (
                   <RotateCw className="h-3 w-3 animate-spin" />
                 )}
@@ -372,7 +324,7 @@ export function CountryConflictsModal({
                 )}
               >
                 <TrendingUp className="h-4 w-4" />
-                Predictions
+                {t('conflicts.tabs.predictions')}
                 {marketsLoading && (
                   <RotateCw className="h-3 w-3 animate-spin" />
                 )}
@@ -388,7 +340,7 @@ export function CountryConflictsModal({
                     <div className="flex flex-col items-center justify-center py-8">
                       <RotateCw className="h-6 w-6 animate-spin text-muted-foreground mb-2" />
                       <span className="text-sm text-muted-foreground">
-                        Finding prediction markets for {country}...
+                        {t('conflicts.markets.finding')} {country}...
                       </span>
                     </div>
                   )}
@@ -402,9 +354,9 @@ export function CountryConflictsModal({
                   {!marketsLoading && markets.length === 0 && !marketsError && (
                     <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
                       <TrendingUp className="h-8 w-8 mb-2 opacity-50" />
-                      <span className="text-sm">No prediction markets found for {country}</span>
+                      <span className="text-sm">{t('conflicts.markets.none')} {country}</span>
                       <span className="text-xs mt-1 opacity-70">
-                        Markets may not exist for all countries
+                        {t('conflicts.markets.disclaimer')}
                       </span>
                     </div>
                   )}
@@ -414,7 +366,7 @@ export function CountryConflictsModal({
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <TrendingUp className="h-4 w-4" />
-                          <span>{markets.length} markets found</span>
+                          <span>{markets.length} {t('conflicts.markets.found')}</span>
                         </div>
                         <a
                           href="https://polymarket.com"
@@ -422,12 +374,12 @@ export function CountryConflictsModal({
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          <span>Powered by Polymarket</span>
+                          <span>{t('conflicts.markets.powered_by')}</span>
                           <ExternalLink className="h-3 w-3" />
                         </a>
                       </div>
                       <div className="space-y-3">
-                        {markets.map((market) => (
+                        {markets.map((market: ParsedMarket) => (
                           <MarketCard key={market.id} market={market} />
                         ))}
                       </div>
@@ -439,7 +391,21 @@ export function CountryConflictsModal({
                 <div className="space-y-6">
                   {/* Answer Section */}
                   {showAnswerSkeleton ? (
-                    <AnswerSkeleton />
+                    <div className="rounded-lg border border-border bg-card p-4">
+                      <div className="mb-4 flex items-center gap-2">
+                        <RotateCw className="h-4 w-4 animate-spin text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">
+                          {t('conflicts.searching')}
+                        </span>
+                      </div>
+                      <div className="space-y-3">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-11/12" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-4/5" />
+                      </div>
+                    </div>
                   ) : data[activeTab as "current" | "past"].conflicts ? (
                     <div className="rounded-lg border border-border bg-card p-4">
                       <div className="mb-4 flex items-center gap-2">
@@ -464,18 +430,42 @@ export function CountryConflictsModal({
 
                   {/* Sources Section */}
                   {showSourcesSkeleton ? (
-                    <SourcesSkeleton />
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Database className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">{t('conflicts.sources')}</span>
+                        <span className="text-sm text-muted-foreground">{t('conflicts.loading_sources')}</span>
+                      </div>
+                      <div className="space-y-3">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="rounded-lg border border-border bg-card p-4">
+                            <div className="flex items-start gap-3">
+                              <Skeleton className="h-6 w-6 rounded-full" />
+                              <div className="flex-1 space-y-2">
+                                <Skeleton className="h-4 w-3/4" />
+                                <Skeleton className="h-3 w-full" />
+                                <Skeleton className="h-3 w-full" />
+                                <div className="flex gap-2 pt-1">
+                                  <Skeleton className="h-5 w-16 rounded-full" />
+                                  <Skeleton className="h-5 w-20 rounded-full" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   ) : data[activeTab as "current" | "past"].sources.length > 0 ? (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <Database className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium text-foreground">Sources</span>
+                        <span className="font-medium text-foreground">{t('conflicts.sources')}</span>
                         <span className="text-sm text-muted-foreground">
                           ({data[activeTab as "current" | "past"].sources.length})
                         </span>
                       </div>
                       <div className="space-y-2">
-                        {data[activeTab as "current" | "past"].sources.slice(0, 10).map((source, i) => (
+                        {data[activeTab as "current" | "past"].sources.slice(0, 10).map((source: { title: string; url: string }, i: number) => (
                           <a
                             key={i}
                             href={source.url}
@@ -508,7 +498,7 @@ export function CountryConflictsModal({
           <div className="py-12 text-center">
             <Swords className="mx-auto h-12 w-12 text-muted-foreground/50" />
             <p className="mt-4 text-sm text-muted-foreground">
-              Click on a country to view its conflict history
+              {t('conflicts.no_data')}
             </p>
           </div>
         )}
@@ -525,6 +515,7 @@ function MarketCard({ market }: MarketCardProps) {
   const leading = getLeadingOutcome(market);
   const isHighProbability = leading.probability >= 70;
   const isLowProbability = leading.probability <= 30;
+  const { t } = useTranslation();
 
   return (
     <a
@@ -540,7 +531,7 @@ function MarketCard({ market }: MarketCardProps) {
 
       {/* Outcomes */}
       <div className="mt-2 flex items-center gap-2 flex-wrap">
-        {market.outcomes.slice(0, 2).map((outcome) => (
+        {market.outcomes.slice(0, 2).map((outcome: { label: string; probability: number }) => (
           <div
             key={outcome.label}
             className={cn(
@@ -562,9 +553,9 @@ function MarketCard({ market }: MarketCardProps) {
 
       {/* Volume & End Date */}
       <div className="mt-2 flex items-center justify-between text-[10px] text-muted-foreground">
-        <span>Volume: {formatVolume(market.volume)}</span>
+        <span>{t('markets.volume')}: {formatVolume(market.volume)}</span>
         {market.endDate && (
-          <span>Ends: {new Date(market.endDate).toLocaleDateString()}</span>
+          <span>{t('markets.ends')}: {new Date(market.endDate).toLocaleDateString()}</span>
         )}
       </div>
     </a>

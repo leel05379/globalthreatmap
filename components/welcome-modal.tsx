@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
+import { useTranslation } from "@/hooks/use-translation";
 import {
   Dialog,
   DialogHeader,
@@ -79,6 +80,7 @@ interface WelcomeModalProps {
 
 export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
   const [dontShowAgain, setDontShowAgain] = useState(false);
+  const { t } = useTranslation();
 
   const handleClose = () => {
     if (dontShowAgain) {
@@ -87,23 +89,61 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
     onOpenChange(false);
   };
 
+  const featuresList = [
+    {
+      icon: <Map className="h-6 w-6" />,
+      title: t('features.interactive_threat_map.title'),
+      description: t('features.interactive_threat_map.description'),
+      color: "text-red-500",
+    },
+    {
+      icon: <Rss className="h-6 w-6" />,
+      title: t('features.event_feed.title'),
+      description: t('features.event_feed.description'),
+      color: "text-orange-500",
+    },
+    {
+      icon: <Globe className="h-6 w-6" />,
+      title: t('features.country_intelligence.title'),
+      description: t('features.country_intelligence.description'),
+      color: "text-blue-500",
+    },
+    {
+      icon: <Search className="h-6 w-6" />,
+      title: t('features.intel_dossiers.title'),
+      description: t('features.intel_dossiers.description'),
+      color: "text-purple-500",
+    },
+    {
+      icon: <Shield className="h-6 w-6" />,
+      title: t('features.military_bases.title'),
+      description: t('features.military_bases.description'),
+      color: "text-green-500",
+    },
+    {
+      icon: <Layers className="h-6 w-6" />,
+      title: t('features.auto_pan_mode.title'),
+      description: t('features.auto_pan_mode.description'),
+      color: "text-cyan-500",
+    },
+  ];
+
   return (
     <Dialog open={open} onClose={handleClose} className="max-w-3xl">
       <DialogHeader onClose={handleClose}>
         <DialogTitle className="flex items-center gap-2">
           <Globe className="h-5 w-5 text-primary" />
-          Welcome to Global Threat Map
+          {t('welcome_modal.title')}
         </DialogTitle>
       </DialogHeader>
 
       <DialogContent className="max-h-[60vh]">
         <p className="mb-6 text-muted-foreground">
-          Your situational awareness platform for tracking global
-          security events, wars, conflicts & threat indicators.
+          {t('welcome_modal.description')}
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          {features.map((feature) => (
+          {featuresList.map((feature) => (
             <div
               key={feature.title}
               className="rounded-lg border border-border bg-muted/30 p-4 transition-colors hover:bg-muted/50"
@@ -125,12 +165,12 @@ export function WelcomeModal({ open, onOpenChange }: WelcomeModalProps) {
           <input
             type="checkbox"
             checked={dontShowAgain}
-            onChange={(e) => setDontShowAgain(e.target.checked)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDontShowAgain(e.target.checked)}
             className="h-4 w-4 rounded border-border bg-background accent-primary"
           />
-          Don&apos;t show this again
+          {t('welcome_modal.dont_show_again')}
         </label>
-        <Button onClick={handleClose}>Get Started</Button>
+        <Button onClick={handleClose}>{t('welcome_modal.get_started')}</Button>
       </DialogFooter>
     </Dialog>
   );

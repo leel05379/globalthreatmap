@@ -21,6 +21,7 @@ export function ThreatMarketsPanel() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const { t } = useTranslation();
 
   const fetchMarkets = useCallback(async () => {
     setIsLoading(true);
@@ -73,14 +74,14 @@ export function ThreatMarketsPanel() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
-            <span className="font-semibold text-sm">Prediction Markets</span>
+            <span className="font-semibold text-sm">{t('markets.title')}</span>
           </div>
           <span className="text-xs text-muted-foreground">
-            powered by Polymarket
+            {t('markets.powered_by')} Polymarket
           </span>
           {markets.length > 0 && !isExpanded && (
             <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
-              {markets.length} active
+              {markets.length} {t('markets.active')}
             </span>
           )}
         </div>
@@ -88,7 +89,7 @@ export function ThreatMarketsPanel() {
         <div className="flex items-center gap-3">
           {lastUpdated && isExpanded && (
             <span className="text-[10px] text-muted-foreground">
-              Updated {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              {t('markets.updated')} {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
             </span>
           )}
           {isExpanded ? (
@@ -111,7 +112,7 @@ export function ThreatMarketsPanel() {
           {/* Toolbar */}
           <div className="flex items-center justify-between px-4 py-2 bg-muted/30">
             <span className="text-xs text-muted-foreground">
-              Geopolitical & conflict prediction markets
+              {t('markets.subtitle')}
             </span>
             <div className="flex items-center gap-2">
               <a
@@ -120,7 +121,7 @@ export function ThreatMarketsPanel() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
-                <span>View all</span>
+                <span>{t('markets.view_all')}</span>
                 <ExternalLink className="h-3 w-3" />
               </a>
               <button
@@ -149,14 +150,14 @@ export function ThreatMarketsPanel() {
             {isLoading && markets.length === 0 && (
               <div className="flex items-center justify-center h-full text-muted-foreground">
                 <RefreshCw className="h-5 w-5 animate-spin mr-2" />
-                <span className="text-sm">Loading markets...</span>
+                <span className="text-sm">{t('markets.loading')}</span>
               </div>
             )}
 
             {!isLoading && markets.length === 0 && !error && (
               <div className="flex items-center justify-center h-full text-muted-foreground">
                 <TrendingUp className="h-5 w-5 mr-2 opacity-50" />
-                <span className="text-sm">No markets found</span>
+                <span className="text-sm">{t('markets.no_markets')}</span>
               </div>
             )}
 
